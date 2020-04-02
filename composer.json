@@ -1,0 +1,10 @@
+{
+    "name": "pollux/wp-custom-checkout",
+    "description": "Checkout plugin for WooCommerce",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "WP_Custom_Checkout\\": "src/"
+        }
+    }
+}
