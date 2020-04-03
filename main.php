@@ -16,17 +16,25 @@
 defined('ABSPATH') || exit;
 
 // Define WPCC_PLUGIN_DIR.
-if (!defined('WCPO_PLUGIN_DIR')) {
-    define('WCPO_PLUGIN_DIR', __DIR__);
+if (!defined('WPCC_PLUGIN_DIR')) {
+    define('WPCC_PLUGIN_DIR', __DIR__);
 }
+
+use WP_Custom_Checkout\CustomCheckout;
+use WP_Custom_Checkout\Bootstrap;
+
 
 // Check if WooCommerce is active
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     // Put your plugin code here
 
     add_action('woocommerce_loaded', function () {
-        require_once WCPO_PLUGIN_DIR.'/vendor/autoload.php';
+        require_once WPCC_PLUGIN_DIR.'/vendor/autoload.php';
 
+        $bootstrap = new Bootstrap();
+        
+        register_activation_hook(__FILE__, [$bootstrap, 'defaultOptions']);
+        
         $customCheckout = new CustomCheckout();
     });
 } else {
