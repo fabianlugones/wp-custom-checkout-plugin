@@ -10,6 +10,13 @@ class CustomCheckout
         add_action( 'wp', [$this, 'removeFields'] );
     }
 
+    public function getDefaultBillingFields()
+    {   
+        $countries = new \WC_Countries();
+        //Get all billing fields corresponding to the base country
+        return array_keys($countries->get_address_fields( $countries->get_base_country(),'billing_'));
+    }
+
     public function removeFields()
     {
 
@@ -17,7 +24,7 @@ class CustomCheckout
         if (function_exists('is_checkout') && (is_checkout() || is_ajax())) {
             //get all setting values (options)
             $allOptions= get_alloptions();
-
+            
             if (WC()->cart && WC()->cart->needs_payment()) {
                 foreach ($pricedFieldsIds as $field)
                 {

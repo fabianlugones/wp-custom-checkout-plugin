@@ -31,20 +31,14 @@ class Settings
     public function getSettings()
     {   
         //Get Default Billing fields
-        $billingFields = $this->getDefaultBillingFields();
+        $checkout = new CustomCheckout;
+        $billingFields = $checkout->getDefaultBillingFields();
         //If the pluging has been activated, populate DB with default options 
         register_activation_hook(__FILE__, [$this, 'defaultOptions']);
 
         $settings = array_merge($this->getPricedSettings($billingFields),$this->getFreeSettings($billingFields)) ;
         return apply_filters('wc_settings_tab_customcheckout',$settings);
 
-    }
-    
-    public function getDefaultBillingFields()
-    {   
-        $countries = new \WC_Countries();
-        //Get all billing fields corresponding to the base country
-        return array_keys($countries->get_address_fields( $countries->get_base_country(),'billing_'));
     }
 
     public function getPricedSettings($billingFields)
