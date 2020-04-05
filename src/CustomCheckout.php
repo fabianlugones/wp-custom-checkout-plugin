@@ -7,7 +7,7 @@ class CustomCheckout
 
     public function __construct()
     {
-        add_action( 'wp', [$this, 'removeFields'] );
+        add_action( 'wp', [$this, 'billingFieldsDisplay'] );
     }
 
     public function getDefaultBillingFields()
@@ -17,45 +17,84 @@ class CustomCheckout
         return array_keys($countries->get_address_fields( $countries->get_base_country(),'billing_'));
     }
 
-    public function removeFields()
+    public function billingFieldsDisplay()
     {
 
         //Check if is checkout
         if (function_exists('is_checkout') && (is_checkout() || is_ajax())) {
-            //get all setting values (options)
-            $allOptions= get_alloptions();
-            
-            if (WC()->cart && WC()->cart->needs_payment()) {
-                foreach ($pricedFieldsIds as $field)
-                {
-                    //Tengo que preguntar si valor de mi field tiene yes en el arreglo de options que traje
-                    if ($allOptions[$field] == 'yes')
-                    {
-                        $fieldsToRemove[]=$field;
+            add_filter( 'woocommerce_checkout_fields', function( $fields ) {
+                $fieldsToRemove = $this->getFieldsToRemove();
+                if (!empty($fieldsToRemove)) {
+                
+                    // unset each of those unwanted fields
+                    foreach( $fieldsToRemove as $fieldName ) {
+                        unset( $fields['billing'][ $fieldName ] );
                     }
+                
                 }
-            }
-            else {
-                foreach ($freeFieldsIds as $field)
-                {
-                    //Tengo que preguntar si valor de mi field tiene un yes el arreglo de options que traje
-                    if ($allOptions[$field] == 'yes')
-                    {
-                        $fieldsToRemove[]=$field;
-                    }
-                }
-            }
+                return $fields;
+                
+            } );    
 
-            }
+            
+            
+            
+        }
 
         else {
             return; 
         }
 
-        //Acá debería remover los fields que traje 
-
 
     }
 
-    
+    public function fieldSelected($fieldId,$allOptions)
+    {
+        if ($allOptions[$fieldId] == 'yes')
+        {
+            return true;
+        }
+        else
+        {
+            return false; 
+        }
+    }
+
+    public function getFieldsToRemove()
+    {
+        //get all setting values (options)
+        $allOptions= wp_load_alloptions();
+        //get all billing fields 
+        $billingFieldsNames=$this->getDefaultBillingFields();
+        //If the purchase is priced 
+        if (WC()->cart && WC()->cart->needs_payment()) {
+            foreach ($billingFieldsNames as $fieldName)
+            {   $field = new Field($fieldName);
+                //If this field has been selected in the settings panel, will be included in the array fields to remove
+                if ($this->fieldSelected($field->getPricedIdField(), $allOptions))
+                {
+                    $fieldsToRemove[]=$fieldName;
+                }
+            }
+        }
+        //If the purchase is free
+        else {
+            foreach ($billingFieldsNames as $fieldName)
+            {   $field = new Field($fieldName);
+                //If this field has been selected in the settings panel, will be included in the array fields to remove
+                if ($this->fieldSelected($field->getFreeIdField(),$allOptions))
+                {
+                    $fieldsToRemove[]=$fieldName;
+                }
+            }
+        }
+
+        return $fieldsToRemove;
+    }    
+
+    public function removeBillingFields($fieldsToRemove)
+    {
+        
+	}
 }
+

@@ -31,16 +31,9 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     // Put your plugin code here
 
     add_action('woocommerce_loaded', function () {
-        require_once WPCC_PLUGIN_DIR.'/vendor/autoload.php';
-
-        
-
-      $bootstrap = new Bootstrap();
-
-      
-        
-        
-   //     $customCheckout = new CustomCheckout();
+    require_once WPCC_PLUGIN_DIR.'/vendor/autoload.php';
+    $bootstrap = new Bootstrap();
+    $customCheckout = new CustomCheckout();
     });
 } else {
     add_action('admin_notices', function () {
