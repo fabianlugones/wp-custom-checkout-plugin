@@ -6,14 +6,17 @@
  * Version: 1.0
  * Author: Osama Bin Laden
  * Author URI: https://fabeanfabean.com
- * Text Domain: preorders-woocommerce
+ * Text Domain: custom-checkout
  * Domain Path: /etc/i18n/languages/
  *
  * @package WPCustomCheckout
  *
  */
 
+
+
 defined('ABSPATH') || exit;
+
 
 // Define WPCC_PLUGIN_DIR.
 if (!defined('WPCC_PLUGIN_DIR')) {
@@ -23,7 +26,6 @@ if (!defined('WPCC_PLUGIN_DIR')) {
 use WP_Custom_Checkout\CustomCheckout;
 use WP_Custom_Checkout\Bootstrap;
 
-
 // Check if WooCommerce is active
 if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
     // Put your plugin code here
@@ -31,11 +33,14 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
     add_action('woocommerce_loaded', function () {
         require_once WPCC_PLUGIN_DIR.'/vendor/autoload.php';
 
-        $bootstrap = new Bootstrap();
         
-        register_activation_hook(__FILE__, [$bootstrap, 'defaultOptions']);
+
+      $bootstrap = new Bootstrap();
+
+      
         
-        $customCheckout = new CustomCheckout();
+        
+   //     $customCheckout = new CustomCheckout();
     });
 } else {
     add_action('admin_notices', function () {
@@ -43,4 +48,6 @@ if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_
         $message = __('Oops! looks like WooCommerce is disabled. Please, enable it in order to use WP Custom Checkout.', 'customCheckout');
         printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
     });
+
+
 }

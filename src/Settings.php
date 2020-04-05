@@ -5,7 +5,7 @@ namespace WP_Custom_Checkout;
 class Settings
 {
     public function __construct()
-    {
+    {        
         add_filter('woocommerce_settings_tabs_array', [$this, 'addSettingsTab'], 50);
         add_action('woocommerce_settings_tabs_settings_tab_customcheckout', [$this, 'settingsTab']);
         add_action('woocommerce_update_options_settings_tab_customcheckout', [$this, 'updateSettings']);
@@ -29,7 +29,16 @@ class Settings
     }
 
     public function getSettings()
-    {
+    {   
+        //Get Default Billing fields
+        $billingFields = $this->getDefaultBillingFields();
+        //If the pluging has been activated, populate DB with default options 
+        register_activation_hook(__FILE__, [$bootstrap, 'defaultOptions']);
+
+        $settings = array_merge($this->getPricedSettings($billingFields),$this->getFreeSettings($billingFields)) ;
+        return apply_filters('wc_settings_tab_customcheckout', $settings);
+
+        /* Old harcoded settings
         $settings = [
             'priced_cart_title' => [
                 'name' => __('Priced Cart Fields', 'customcheckout'),
@@ -169,6 +178,118 @@ class Settings
             ],
         ];
 
-        return apply_filters('wc_settings_tab_customcheckout', $settings);
+        
+        */
     }
+    
+    public function getDefaultBillingFields()
+    {   
+        $countries = new \WC_Countries();
+        //Get all billing fields corresponding to the base country
+        return array_keys($countries->get_address_fields( $countries->get_base_country(),'billing_'));
+    }
+
+    public function getPricedSettings($billingFields)
+    {   
+        $pricedSettings = [
+             'priced_cart_title' => [
+                'name' => __('Priced Cart Fields', 'customcheckout'),
+                'type' => 'title',
+                'desc' => __('Please select the fields that you want to hide when a priced purchase is made', 'customfields'),
+                'id' => 'wc_settings_tab_customcheckout_priced_cart_title',
+                ]
+            ] ;
+
+        /* Old harcoded settings
+        $settings = [
+            'priced_cart_title' => [
+                'name' => __('Priced Cart Fields', 'customcheckout'),
+                'type' => 'title',
+                'desc' => __('Please select the fields that you want to hide when a priced purchase is made', 'customfields'),
+                'id' => 'wc_settings_tab_customcheckout_priced_cart_title',
+            ],
+            'billing_company_priced' => [
+                'name' => __('Company', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_company_priced',
+            ],
+            'billing_phone_priced' => [
+                'name' => __('Phone', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_phone_priced',
+            ],
+            'billing_address_1_priced' => [
+                'name' => __('Address 1', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_address_1_priced',
+            ],
+            'billing_address_2_priced' => [
+                'name' => __('Address 2', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_address_2_priced',
+            ],
+            'billing_city_priced' => [
+                'name' => __('City', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_city_priced',
+            ],
+
+            'billing_post_code_priced' => [
+                'name' => __('Post Code', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_post_code_priced',
+            ],
+            'billing_country_priced' => [
+                'name' => __('Country', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_country_priced',
+            ],
+
+            'billing_state_priced' => [
+                'name' => __('State', 'customfields'),
+                'type' => 'checkbox',
+                'std' => 'no',
+                'default' => 'no',
+                'id' => 'wc_billing_state_priced',
+            ],
+            'priced_cart_end' => [
+                'type' => 'sectionend',
+                'id' => 'wc_settings_tab_customcheckout_priced_cart_title',
+            ],        
+            */
+    }
+
+    public function defaultOptions()
+    {
+        //waiting for response to optimize
+        $defaultBillingFields = $this->getDefaultBillingFields();
+
+
+        foreach ($defaultBillingFields as $fieldName ) {
+            $field = new Field( $fieldName);
+            $pricedIdField = $field->getPricedIdField();
+            if (!get_option($pricedIdField) || '' === get_option($pricedIdField)) {
+                add_option($pricedIdField, 'no');
+            }
+            $freeIdField = $field->getFreeIdField();
+            if (!get_option($freeIdField) || '' === get_option($freeIdField)) {
+                add_option($freeIdField, 'no');
+            }
+        }
+    }
+
 }

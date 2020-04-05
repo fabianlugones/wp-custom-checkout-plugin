@@ -4,6 +4,7 @@ namespace WP_Custom_Checkout;
 
 class Bootstrap
 {
+    
     public function __construct()
     {
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueStyles']);
