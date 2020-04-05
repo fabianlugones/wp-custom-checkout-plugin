@@ -1,5 +1,6 @@
 <?php
 
+namespace WP_Custom_Checkout;
 
 class Field  
 {
@@ -7,17 +8,17 @@ class Field
 
     public function __construct($fieldName)
     {
-        $this->$name = $fieldName;
+        $this->name = $fieldName;
     }
 
     public function getPricedIdField()
     {
-        return 'wc_'.$this->$name.'_priced';
+        return 'wc_'.$this->name.'_priced';
     }
     
     public function getFreeIdField()
     {
-        return 'wc_'.$this->$name.'_free';
+        return 'wc_'.$this->name.'_free';
     }
     
     
