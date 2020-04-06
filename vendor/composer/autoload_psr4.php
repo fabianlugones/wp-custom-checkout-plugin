@@ -6,5 +6,5 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'WP_Custom_Checkout\\' => array($baseDir . '/src'),
+    'WP_Hide_Fields\\' => array($baseDir . '/src'),
 );

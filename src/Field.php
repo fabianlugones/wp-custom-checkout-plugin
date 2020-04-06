@@ -1,8 +1,8 @@
 <?php
 
-namespace WP_Custom_Checkout;
+namespace WP_Hide_Fields;
 
-class Field  
+class Field
 {
     public $name;
 
@@ -15,13 +15,9 @@ class Field
     {
         return 'wc_'.$this->name.'_priced';
     }
-    
+
     public function getFreeIdField()
     {
         return 'wc_'.$this->name.'_free';
     }
-    
-    
-
-
 }

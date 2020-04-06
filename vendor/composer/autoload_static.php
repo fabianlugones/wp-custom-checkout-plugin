@@ -9,12 +9,12 @@ class ComposerStaticInit106b4862ef9564bee634a7da2113026b
     public static $prefixLengthsPsr4 = array (
         'W' => 
         array (
-            'WP_Custom_Checkout\\' => 19,
+            'WP_Hide_Fields\\' => 15,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'WP_Custom_Checkout\\' => 
+        'WP_Hide_Fields\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),

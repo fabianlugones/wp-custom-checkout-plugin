@@ -4,7 +4,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "WP_Custom_Checkout\\": "src/"
+            "WP_Hide_Fields\\": "src/"
         }
     }
 }
